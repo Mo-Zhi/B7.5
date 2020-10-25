@@ -1,41 +1,48 @@
 import PySimpleGUI as sg
+from board import Board
 
 sg.theme('DarkAmber')
 
-class Player:
-  
-    class Board:
-        dimensions
-        ships
-        shots
+boardSize = 6
+player = Board(False)
+enemy = Board()
 
-        def __init__(self, dimensions=6):
-            self.dimensions = dimensions
-            shots = [[ 0 for i in range(dimensions)] for i in range(dimensions)]
+leftColumn = [[sg.Text('TEXT', key='-TEXT-SHIPS-')]] + [[sg.Button(size=(
+    1, 1), key=f'-SHIP{i}{j}-') for j in range(boardSize)] for i in range(boardSize)]
+rightColumn = [[sg.Text('TEXT', key='-TEXT-SHOTS-')]] + [[sg.Button(
+    size=(1, 1), key=f'-SHOT{i}{j}-') for i in range(boardSize)] for j in range(boardSize)]
+layout = [[sg.Column(leftColumn),
+           sg.VerticalSeparator(),
+           sg.Column(rightColumn)]]
 
-        def checkCoordinates(size, row, col, direction='row'):
-           if direction == 'row':
-               for i in range(col):
-                   if 
-        
-        def addShip(size, row, col, direction='row')
-            if shots[row][col]:
+window = sg.Window('battle', layout)
 
-            else:
-                ship = Ship(size, row, col, direction)
-                ships.extend(ship.coordinates)
-        
-        class Ship:
-            coordinates
+while True:
+    event, values = window.read()
 
-            def __init__(self, size, row, col, direction):
-                if direction == 'row':
-                    for i in range(size):
-                        coordinates.append((row, col + i))
-                elif direction == 'col':
-                    for i in range(size):
-                        coordinates.append((row + i, col))
+    if event == sg.WIN_CLOSED or event == 'Cancel':
+        break
+    if event[:5] == '-SHIP':
+        row = int(event[5])
+        col = int(event[6])
+        shipsAmount = len(player.ships)
 
-    
+        if shipsAmount < 4:
+            player.addShip(1, row, col)
+            window[event].update(disabled=True, button_color=(
+                'black', 'black'))
+        elif shipsAmount < 6:
+            coordinates = player.addShip(2, row, col)
+            for i in range(len(coordinates)):
+                window[event[:5] + str(coordinates[i][0]) + str(
+                    coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
+        elif shipsAmount == 6:
+            coordinates = player.addShip(3, row, col)
+            for i in range(len(coordinates)):
+                window[event[:5] + str(coordinates[i][0]) + str(
+                    coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
+            for i in range(boardSize):
+                for j in range(boardSize):
+                    window[f'-SHIP{i}{j}-'].update(disabled=True)
 
-        
+window.close()
