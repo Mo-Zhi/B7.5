@@ -2,13 +2,14 @@ import random
 
 
 class Board:
+    """A Board has size, an array of player's ships and an array of player's"""
 
     class Ship:
+        """A Ship has coordinates of its cells."""
 
         def __init__(self, row, col, size, direction='row'):
-            """Contains coordinates of cells it occupies and adds a new ship to the array of ships."""
-            self._coordinates = []
 
+            self._coordinates = []
             if direction == 'row':
                 for i in range(size):
                     self._coordinates.append((row, col + i))
@@ -21,7 +22,7 @@ class Board:
             return self._coordinates
 
     def addShip(self, size=1, row=-1, col=-1, direction='row'):
-
+        """Adds new Ship to the array of Ships"""
         if row == col == -1:
             row = random.randint(0, self._boardSize-1)
             col = random.randint(0, self._boardSize - 1)

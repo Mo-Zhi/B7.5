@@ -7,14 +7,27 @@ boardSize = 6
 player = Board(False)
 enemy = Board()
 
-leftColumn = [[sg.Text('TEXT', key='-TEXT-SHIPS-')]] + [[sg.Button(size=(
-    1, 1), key=f'-SHIP{i}{j}-') for j in range(boardSize)] for i in range(boardSize)]
-rightColumn = [[sg.Text('TEXT', key='-TEXT-SHOTS-')]] + [[sg.Button(
-    size=(1, 1), key=f'-SHOT{i}{j}-') for i in range(boardSize)] for j in range(boardSize)]
-layout = [[sg.Column(leftColumn),
-           sg.VerticalSeparator(),
-           sg.Column(rightColumn)]]
-
+leftText = [
+    [sg.Text('TEXT', key='-TEXT-SHIPS-')]
+]
+leftBoard = [
+    [sg.Button(size=(1, 1), key=f'-SHIP{i}{j}-')
+     for j in range(boardSize)] for i in range(boardSize)
+]
+leftColumn = leftText + leftBoard
+rightText = [
+    [sg.Text('TEXT', key='-TEXT-SHOTS-')]
+]
+rightBoard = [
+    [sg.Button(size=(1, 1), key=f'-SHOT{i}{j}-')
+     for i in range(boardSize)] for j in range(boardSize)
+]
+rightColumn = rightText + rightBoard
+layout = [
+    [sg.Column(leftColumn),
+     sg.VerticalSeparator(),
+     sg.Column(rightColumn)]
+]
 window = sg.Window('battle', layout)
 
 while True:
@@ -22,7 +35,7 @@ while True:
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
-    if event[:5] == '-SHIP':
+    if event[: 5] == '-SHIP':
         row = int(event[5])
         col = int(event[6])
         shipsAmount = len(player.ships)
