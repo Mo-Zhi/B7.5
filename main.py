@@ -6,7 +6,6 @@ sg.theme('DarkAmber')
 boardSize = 6
 player = Board(False)
 enemy = Board()
-
 leftText = [
     [sg.Text('TEXT', key='-TEXT-SHIPS-')]
 ]
@@ -28,14 +27,14 @@ layout = [
      sg.VerticalSeparator(),
      sg.Column(rightColumn)]
 ]
-window = sg.Window('battle', layout)
+window = sg.Window('Sea Battle', layout)
 
 while True:
     event, values = window.read()
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
-    if event[: 5] == '-SHIP':
+    elif event[: 5] == '-SHIP':
         row = int(event[5])
         col = int(event[6])
         shipsAmount = len(player.ships)
