@@ -34,6 +34,7 @@ while True:
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
+
     elif event[:5] == '-SHIP':
         row = int(event[5])
         col = int(event[6])
@@ -42,31 +43,35 @@ while True:
         if shipsAmount < 4:
             try:
                 player.addShip(1, row, col, 'row')
-            except:
-                sg.popup('FuckOff')
-            window[event].update(disabled=True, button_color=(
-                'black', 'black'))
+            except Exception as e:
+                sg.popup(str(e), button_type='')
+            else:
+                window[event].update(disabled=True, button_color=(
+                    'black', 'black'))
+
         elif shipsAmount < 6:
             try:
                 coordinates = player.addShip(2, row, col, 'row')
-            except:
-                sg.popup('FUCKOFF')
+            except Exception as e:
+                sg.popup(str(e))
             else:
-                sg.popup('fuckoff')
-            for i in range(len(coordinates)):
-                window[event[:5] + str(coordinates[i][0]) + str(
-                    coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
+                for i in range(len(coordinates)):
+                    window[event[:5] + str(coordinates[i][0]) + str(
+                        coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
+
         elif shipsAmount == 6:
             try:
                 coordinates = player.addShip(3, row, col, 'row')
-            except:
-                sg.popup('FUCKOFF')
-            for i in range(len(coordinates)):
-                window[event[:5] + str(coordinates[i][0]) + str(
-                    coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
-            for i in range(boardSize):
-                for j in range(boardSize):
-                    window[f'-SHIP{i}{j}-'].update(disabled=True)
+            except Exception as e:
+                sg.popup(str(e))
+            else:
+                for i in range(len(coordinates)):
+                    window[event[:5] + str(coordinates[i][0]) + str(
+                        coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
+                for i in range(boardSize):
+                    for j in range(boardSize):
+                        window[f'-SHIP{i}{j}-'].update(disabled=True)
+
     elif event[:5] == '-SHOT':
         pass
 

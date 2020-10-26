@@ -14,9 +14,10 @@ class Board:
                 for tempShip in ships:
                     for coordinates in tempShip.coordinates:
                         if row == coordinates[0] and col == coordinates[1]:
-                            raise Exception('Cell is occupied')
-            if row < 0 or row > self.boardSize or col < 0 or col > self.boardSize:
-                raise Exception('Outside of board')
+                            raise Exception(
+                                'Ship cannot be placed on occupied cells.')
+            if row < 0 or row > self.boardSize-1 or col < 0 or col > self.boardSize-1:
+                raise Exception('Ship is not entirely inside of the board.')
 
             return True
 
@@ -34,8 +35,7 @@ class Board:
                     col = random.randint(0, boardSize-1)
                     try:
                         self.checkCoordinates(row, col, ships)
-                    except Exception as e:
-                        print(str(e))
+                    except:
                         break
                     else:
                         self.coordinates.append((row, col))
@@ -43,7 +43,7 @@ class Board:
             elif direction == 'row':
                 for i in range(size):
                     if self.checkCoordinates(row, col+i, ships):
-                        tempCoordinates.append((row, col+i))
+                        tempCoordinates.append((row, col + i))
             elif direction == 'column':
                 for i in range(size):
                     if self.checkCoordinates(row, col+i, ships):
