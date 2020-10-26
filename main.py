@@ -34,27 +34,40 @@ while True:
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
-    elif event[: 5] == '-SHIP':
+    elif event[:5] == '-SHIP':
         row = int(event[5])
         col = int(event[6])
         shipsAmount = len(player.ships)
 
         if shipsAmount < 4:
-            player.addShip(1, row, col)
+            try:
+                player.addShip(1, row, col, 'row')
+            except:
+                sg.popup('FuckOff')
             window[event].update(disabled=True, button_color=(
                 'black', 'black'))
         elif shipsAmount < 6:
-            coordinates = player.addShip(2, row, col)
+            try:
+                coordinates = player.addShip(2, row, col, 'row')
+            except:
+                sg.popup('FUCKOFF')
+            else:
+                sg.popup('fuckoff')
             for i in range(len(coordinates)):
                 window[event[:5] + str(coordinates[i][0]) + str(
                     coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
         elif shipsAmount == 6:
-            coordinates = player.addShip(3, row, col)
+            try:
+                coordinates = player.addShip(3, row, col, 'row')
+            except:
+                sg.popup('FUCKOFF')
             for i in range(len(coordinates)):
                 window[event[:5] + str(coordinates[i][0]) + str(
                     coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
             for i in range(boardSize):
                 for j in range(boardSize):
                     window[f'-SHIP{i}{j}-'].update(disabled=True)
+    elif event[:5] == '-SHOT':
+        pass
 
 window.close()

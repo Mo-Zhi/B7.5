@@ -8,50 +8,80 @@ class Board:
     class Ship:
         """A Ship has coordinates of its cells."""
 
-        def __init__(self, row, col, size, direction='row'):
+        def checkCoordinates(self, row, col, ships):
 
+            if len(ships) > 0:
+                for tempShip in ships:
+                    for coordinates in tempShip.coordinates:
+                        if row == coordinates[0] and col == coordinates[1]:
+                            raise Exception('Cell is occupied')
+            if row < 0 or row > self.boardSize or col < 0 or col > self.boardSize:
+                raise Exception('Outside of board')
+
+            return True
+
+        def __init__(self, size=1, row=-1, col=-1, direction='',
+                     boardSize=6, ships=[]):
+
+            self._boardSize = boardSize
+            self._direction = direction
             self._coordinates = []
-            if direction == 'row':
+            tempCoordinates = []
+
+            if direction == '':
+                while True:
+                    row = random.randint(0, boardSize-1)
+                    col = random.randint(0, boardSize-1)
+                    try:
+                        self.checkCoordinates(row, col, ships)
+                    except Exception as e:
+                        print(str(e))
+                        break
+                    else:
+                        self.coordinates.append((row, col))
+                        break
+            elif direction == 'row':
                 for i in range(size):
-                    self._coordinates.append((row, col + i))
+                    if self.checkCoordinates(row, col+i, ships):
+                        tempCoordinates.append((row, col+i))
             elif direction == 'column':
                 for i in range(size):
-                    self._coordinates.append((row + i, col))
+                    if self.checkCoordinates(row, col+i, ships):
+                        tempCoordinates.append((row + i, col))
+            self.coordinates = tempCoordinates
 
         @property
         def coordinates(self):
             return self._coordinates
 
-    def checkCoordinates(self, size, row, col, direction):
-        for tempShip in self.ships:
-            for coordinates in tempShip.coordinates:
-                if row == coordinates[0] and col == coordinates[1]:
-                    return True
-        if row < 0 or row > self.size or col < 0 or col > self.size:
-            return True
+        @coordinates.setter
+        def coordinates(self, coordinates):
+            self._coordinates = coordinates
 
-        return False
+        @property
+        def boardSize(self):
+            return self._boardSize
 
-    def addShip(self, size=1, row=-1, col=-1, direction='row'):
-        """Adds new Ship to the array of Ships"""
-        if row == col == -1:
-            while True:
-                row = random.randint(0, self._boardSize-1)
-                col = random.randint(0, self._boardSize-1)
-                if self.checkCoordinates(size, row, col, direction):
-                    continue
-                break
-        if self.checkCoordinates(size, row, col, direction):
-            raise Exception("Invalid cell")
-        ship = self.Ship(row, col, size, direction)
+        @property
+        def direction(self):
+            return self._direction
+
+    def addShip(self, size=1, row=-1, col=-1,
+                direction='', boardSize=6):
+        """Adds a new Ship to the array of Ships and returns its coordinates as an array of tuples"""
+
+        ship = self.Ship(size, row, col, direction,
+                         boardSize, self.ships)
         self.ships.append(ship)
         return ship.coordinates
 
     def __init__(self, isEnemy=True, boardSize=6):
         self._boardSize = boardSize
         self._ships = []
-        self._shots = [[0 for i in range(boardSize)]
-                       for i in range(boardSize)]
+        self._shots = [
+            [0 for i in range(boardSize)]
+            for i in range(boardSize)
+        ]
 
         if isEnemy:
             for _ in range(4):
