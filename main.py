@@ -1,5 +1,5 @@
-import PySimpleGUI as sg
-from board import Board
+from PySimpleGUI import PySimpleGUI as sg
+from Board import Board
 
 sg.theme('DarkAmber')
 
@@ -19,7 +19,7 @@ rightText = [
 ]
 rightBoard = [
     [sg.Button(size=(1, 1), key=f'-SHOT{i}{j}-')
-     for i in range(boardSize)] for j in range(boardSize)
+     for j in range(boardSize)] for i in range(boardSize)
 ]
 rightColumn = rightText + rightBoard
 layout = [
@@ -29,13 +29,22 @@ layout = [
 ]
 window = sg.Window('Sea Battle', layout)
 
+
+def updateButton(event, buttonColor=('black', 'black'), isDisabled=True):
+
+    if buttonColor == None:
+        window[event].update(disabled=isDisabled)
+    else:
+        window[event].update(disabled=isDisabled, button_color=buttonColor)
+
+
 while True:
     event, values = window.read()
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
 
-    elif event[:5] == '-SHIP':
+    elif event[1:5] == 'SHIP':
         row = int(event[5])
         col = int(event[6])
         shipsAmount = len(player.ships)
@@ -44,10 +53,9 @@ while True:
             try:
                 player.addShip(1, row, col, 'row')
             except Exception as e:
-                sg.popup(str(e), button_type='')
+                sg.popup(str(e))
             else:
-                window[event].update(disabled=True, button_color=(
-                    'black', 'black'))
+                updateButton(event)
 
         elif shipsAmount < 6:
             try:
@@ -56,8 +64,8 @@ while True:
                 sg.popup(str(e))
             else:
                 for i in range(len(coordinates)):
-                    window[event[:5] + str(coordinates[i][0]) + str(
-                        coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
+                    updateButton(event[:5] + str(coordinates[i][0]) + str(
+                        coordinates[i][1]) + '-')
 
         elif shipsAmount == 6:
             try:
@@ -66,13 +74,32 @@ while True:
                 sg.popup(str(e))
             else:
                 for i in range(len(coordinates)):
-                    window[event[:5] + str(coordinates[i][0]) + str(
-                        coordinates[i][1]) + '-'].update(disabled=True, button_color=('black', 'black'))
+                    updateButton(event[:5] + str(coordinates[i][0]) + str(
+                        coordinates[i][1]) + '-')
                 for i in range(boardSize):
                     for j in range(boardSize):
-                        window[f'-SHIP{i}{j}-'].update(disabled=True)
+                        updateButton(f'-SHIP{i}{j}-', None, True)
+                        updateButton(f'-SHOT{i}{j}-', None, False)
 
-    elif event[:5] == '-SHOT':
-        pass
+    elif event[1:5] == 'SHOT':
+        row, col = int(event[5]), int(event[6])
+        cellIsOccupied = False
+        for tempShip in enemy.ships:
+            if cellIsOccupied:
+                break
+            for coordinates in tempShip.coordinates:
+                if row == coordinates[0] and col == coordinates[1]:
+                    cellIsOccupied = True
+                    enemy.occupiedCells = -1
+                    break
+
+        if cellIsOccupied:
+            updateButton(event, ('grey', 'grey'), True)
+        else:
+            updateButton(event, ('white', 'white'), True)
+
+        if enemy.occupiedCells == 0:
+            sg.popup('Enemy has no ships left, you win')
+
 
 window.close()

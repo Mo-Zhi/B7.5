@@ -36,17 +36,20 @@ class Board:
                     try:
                         self.checkCoordinates(row, col, ships)
                     except:
-                        break
+                        continue
                     else:
-                        self.coordinates.append((row, col))
+                        if random.randint(0, 1) == 0:
+                            direction = 'row'
+                        else:
+                            direction = 'column'
                         break
-            elif direction == 'row':
+            if direction == 'row':
                 for i in range(size):
                     if self.checkCoordinates(row, col+i, ships):
                         tempCoordinates.append((row, col + i))
             elif direction == 'column':
                 for i in range(size):
-                    if self.checkCoordinates(row, col+i, ships):
+                    if self.checkCoordinates(row + i, col, ships):
                         tempCoordinates.append((row + i, col))
             self.coordinates = tempCoordinates
 
@@ -77,6 +80,7 @@ class Board:
 
     def __init__(self, isEnemy=True, boardSize=6):
         self._boardSize = boardSize
+        self._occupiedCells = 11
         self._ships = []
         self._shots = [
             [0 for i in range(boardSize)]
@@ -85,10 +89,28 @@ class Board:
 
         if isEnemy:
             for _ in range(4):
-                self.addShip()
+                while True:
+                    try:
+                        self.addShip()
+                    except:
+                        continue
+                    else:
+                        break
             for _ in range(2):
-                self.addShip(2)
-            self.addShip(3)
+                while True:
+                    try:
+                        self.addShip(2)
+                    except:
+                        continue
+                    else:
+                        break
+            while True:
+                try:
+                    self.addShip(3)
+                except:
+                    continue
+                else:
+                    break
 
     @property
     def ships(self):
@@ -101,3 +123,11 @@ class Board:
     @property
     def size(self):
         return self._boardSize
+
+    @property
+    def occupiedCells(self):
+        return self._occupiedCells
+
+    @occupiedCells.setter
+    def occupiedCells(self, value):
+        self._occupiedCells += value
